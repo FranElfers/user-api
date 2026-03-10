@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import { User } from "../models/user";
+import { AuthenticatedRequest } from "../middleware/authMiddleware";
 
-export const getUserById = async (req: Request, res: Response) => {
+export const getUserById = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const { id } = req.params;
-    const user = await User.findById(id)
+    const user = await User.findById(req.userId)
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
@@ -20,7 +20,7 @@ export const getUserById = async (req: Request, res: Response) => {
   }
 };
 
-export const createUser = async (req: Request, res: Response) => {
+export const createUser = async (req: AuthenticatedRequest, res: Response) => {
     try {
         const { name, cuit, email, status, config } = req.body;
         const user = new User({
@@ -42,7 +42,7 @@ export const createUser = async (req: Request, res: Response) => {
     }
 }
 
-export const updateUser = async (req: Request, res: Response) => {
+export const updateUser = async (req: AuthenticatedRequest, res: Response) => {
     try {
     const { id } = req.params;
     const { name, cuit, email, status, config } = req.body;
@@ -65,7 +65,7 @@ export const updateUser = async (req: Request, res: Response) => {
   }
 }
 
-export const deleteUser = async (req: Request, res: Response)  => {
+export const deleteUser = async (req: AuthenticatedRequest, res: Response)  => {
   try {
     const { id } = req.params;
     const deletedUser = await User.findByIdAndDelete(id);
