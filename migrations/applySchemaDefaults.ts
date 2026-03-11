@@ -14,8 +14,6 @@ async function run() {
     for (const [field, schemaType] of Object.entries(schemaPaths)) {
       if (["_id", "__v"].includes(field)) continue;
       const value = user[field];
-      console.log(`valor a aplicar: ${field}`);
-      console.log(`Valor por default: ${schemaType.options.default}`)
 
       // If User don't have the new field and has a default option. Add the new field
       if (!(field in user) && schemaType.options?.default) {
