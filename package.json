@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --poll --transpile-only src/server.ts",
     "build": "tsc",
-    "start": "ts-node-dev src/server.ts"
+    "start": "ts-node-dev src/server.ts",
+    "migrate": "ts-node migrations/applySchemaDefaults.ts"
   },
   "keywords": [],
   "author": "",
