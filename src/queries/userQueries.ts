@@ -2,6 +2,13 @@ import { Request, Response } from "express";
 import { User } from "../models/user";
 import { AuthenticatedRequest } from "../middleware/authMiddleware";
 
+export const roleCache = new Map<string, { isAdmin: boolean; expires: number }>(); 
+
+export async function getIsAdminUserById(userId: string): Promise<boolean> {
+  const result = await User.findById(userId).select("isAdmin").lean();
+  return result?.isAdmin ?? false;
+} 
+
 export const getUserById = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const user = await User.findById(req.userId)
@@ -9,9 +16,11 @@ export const getUserById = async (req: AuthenticatedRequest, res: Response) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
+    
+    // save the rol for 5 minutes
+    roleCache.set(user.id, {isAdmin: user.isAdmin, expires: Date.now() + 5 * 60 * 1000 });
+    
     res.json(user);
-
   } catch (error) {
     res.status(500).json({
       message: "Error searching User",

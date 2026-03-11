@@ -5,6 +5,7 @@ export interface IUser {
   cuit: string;
   email: string;
   status: string;
+  isAdmin: boolean;
   config: Record<string, any>;
 }
 
@@ -26,6 +27,11 @@ const UserSchema = new Schema<IUser>(
     status: {
       type: String,
       default: "active"
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+      required: true
     },
     config: {
       type: Schema.Types.Mixed,
