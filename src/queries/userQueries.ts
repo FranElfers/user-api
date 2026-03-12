@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { User } from "../models/user";
 import { AuthenticatedRequest } from "../middleware/authMiddleware";
+import jwt from "jsonwebtoken";
 
 export const roleCache = new Map<string, { isAdmin: boolean; expires: number }>(); 
 
@@ -42,7 +43,7 @@ export const createUser = async (req: AuthenticatedRequest, res: Response) => {
 
         await user.save();
 
-        res.status(201).json(user)
+        res.status(201).json({data: user, token: jwt.sign({sub: user._id.toString()}, process.env.SECRET_API_KEY!)})
     } catch (error) {
         res.status(500).json({
             message: "Error creating user",
@@ -62,7 +63,7 @@ export const updateUser = async (req: AuthenticatedRequest, res: Response) => {
     );
 
     if (!updatedUser) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).json({ message: "User not found" });
     }
     res.status(200).json(updatedUser);
 
@@ -80,7 +81,7 @@ export const deleteUser = async (req: AuthenticatedRequest, res: Response)  => {
     const deletedUser = await User.findByIdAndDelete(id);
 
     if (!deletedUser) {
-      return res.status(404).json({ message: "Usuario no encontrado" });
+      return res.status(404).json({ message: "User not found" });
     }
 
     res.status(200).json({
