@@ -10,9 +10,30 @@ export async function getIsAdminUserById(userId: string): Promise<boolean> {
   return result?.isAdmin ?? false;
 } 
 
+export const getActualUser = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const user = await User.findById(req.actualUserId)
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    
+    // save the rol for 5 minutes
+    roleCache.set(user.id, {isAdmin: user.isAdmin, expires: Date.now() + 5 * 60 * 1000 });
+    
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error searching User",
+      error
+    });
+  }
+};
+
 export const getUserById = async (req: AuthenticatedRequest, res: Response) => {
   try {
-    const user = await User.findById(req.userId)
+    const { userId } = req.params;
+    const user = await User.findById(userId)
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });

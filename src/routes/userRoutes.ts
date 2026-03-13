@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getUserById, createUser, updateUser, deleteUser } from "../queries/userQueries";
+import { getUserById, getActualUser, createUser, updateUser, deleteUser } from "../queries/userQueries";
 import { authMiddleware, authorizeAdmin } from "../middleware/authMiddleware";
 
 
@@ -29,7 +29,40 @@ const router = Router();
    *       500:
    *         description: Internal error
 */
-router.get("/users", authMiddleware, getUserById);
+router.get("/users", authMiddleware, getActualUser);
+
+/**
+   * @openapi
+   * /api/admin/users/{id}:
+   *   get:
+   *     summary: Get user info by his id (admin only)
+   *     description: Returns user's profile using the userId from the query param.
+   *     tags:
+   *       - Admin
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+  *       - in: path
+  *         name: id
+  *         required: true
+  *         schema:
+  *           type: string
+  *         description: User ID
+   *     responses:
+   *       200:
+   *         description: User profile data
+   *         content:
+   *           application/json:
+   *             schema:
+   *               $ref: '#/components/schemas/getUser'
+   *       401:
+   *         description: Unauthorized - missing or invalid token
+   *       404:
+   *         description: User Not Found
+   *       500:
+   *         description: Internal error
+*/
+router.get("/admin/users/:userId", authMiddleware, authorizeAdmin, getUserById);
 
 /**
  * @openapi

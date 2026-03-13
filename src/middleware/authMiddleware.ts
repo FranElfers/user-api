@@ -4,11 +4,11 @@ import jwt from "jsonwebtoken";
 
 
 export interface AuthenticatedRequest extends Request {
-	userId?: string;
+	actualUserId?: string;
 }
 
 export async function authorizeAdmin(req: AuthenticatedRequest, res: Response, next: NextFunction) {
-  const userId = req.userId;
+  const userId = req.actualUserId;
   if (!userId) return res.status(401).json({ message: "User not autenticated" });
 
   const cached = roleCache.get(userId);
@@ -52,7 +52,7 @@ export function authMiddleware(req: AuthenticatedRequest, res: Response, next: N
       sub: string;
     };
 
-    req.userId = decodedToken.sub;
+    req.actualUserId = decodedToken.sub;
     next();
   } catch {
     return res.status(401).json({ message: "Invalid Token" });
