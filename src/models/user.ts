@@ -1,5 +1,13 @@
 import { Schema, model } from "mongoose";
 
+function argentinaNow(): Date {
+  const argentinaTime = new Date().toLocaleString("en-US", {
+    timeZone: "America/Argentina/Buenos_Aires"
+  });
+
+  return new Date(argentinaTime);
+}
+
 export interface IUser {
   name: string;
   cuit: string;
@@ -39,7 +47,9 @@ const UserSchema = new Schema<IUser>(
     }
   },
   {
-    timestamps: true
+    timestamps: {
+      currentTime: argentinaNow
+    }
   }
 );
 
