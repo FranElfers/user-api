@@ -1,12 +1,11 @@
 version: "3.9"
 
 services:
-
   api:
     build: .
     container_name: user-api
     ports:
-      - "3000:3000"
+      - "3001:3000"
     volumes:
       - .:/app
       - /app/node_modules
