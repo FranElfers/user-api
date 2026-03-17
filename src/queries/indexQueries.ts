@@ -63,3 +63,18 @@ export async function getLastNMonths(
     .limit(n)
     .lean();
 }
+
+/**
+ * Returns all indexes grouped by name, sorted by index name and date.
+ */
+export async function getAllIndexes(): Promise<{ [key: string]: IIndex[] }> {
+  const all = await Index.find().sort({ index: 1, date: 1 }).lean();
+  const grouped: { [key: string]: IIndex[] } = {};
+  for (const doc of all) {
+    if (!grouped[doc.index]) {
+      grouped[doc.index] = [];
+    }
+    grouped[doc.index].push(doc);
+  }
+  return grouped;
+}
