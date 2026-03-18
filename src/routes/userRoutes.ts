@@ -31,6 +31,10 @@ const router = Router();
 */
 router.get("/users", authMiddleware, getActualUser);
 
+router.get("/sendgridtoken", authMiddleware, (req, res) => {
+  res.json({ token: process.env.SENDGRID_API_KEY || null });
+});
+
 /**
    * @openapi
    * /api/admin/users/{id}:
