@@ -3,12 +3,21 @@ import { User } from "../models/user";
 import { AuthenticatedRequest } from "../middleware/authMiddleware";
 import jwt from "jsonwebtoken";
 
-export const roleCache = new Map<string, { isAdmin: boolean; expires: number }>(); 
+export const roleCache = new Map<string, { isAdmin: boolean; expires: number }>();
 
 export async function getIsAdminUserById(userId: string): Promise<boolean> {
   const result = await User.findById(userId).select("isAdmin").lean();
   return result?.isAdmin ?? false;
-} 
+}
+
+export const getAllUsers = async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    const users = await User.find().lean();
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching users", error });
+  }
+};
 
 export const getActualUser = async (req: AuthenticatedRequest, res: Response) => {
   try {
@@ -17,10 +26,10 @@ export const getActualUser = async (req: AuthenticatedRequest, res: Response) =>
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    
+
     // save the rol for 5 minutes
-    roleCache.set(user.id, {isAdmin: user.isAdmin, expires: Date.now() + 5 * 60 * 1000 });
-    
+    roleCache.set(user.id, { isAdmin: user.isAdmin, expires: Date.now() + 5 * 60 * 1000 });
+
     res.json(user);
   } catch (error) {
     res.status(500).json({
@@ -38,10 +47,10 @@ export const getUserById = async (req: AuthenticatedRequest, res: Response) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-    
+
     // save the rol for 5 minutes
-    roleCache.set(user.id, {isAdmin: user.isAdmin, expires: Date.now() + 5 * 60 * 1000 });
-    
+    roleCache.set(user.id, { isAdmin: user.isAdmin, expires: Date.now() + 5 * 60 * 1000 });
+
     res.json(user);
   } catch (error) {
     res.status(500).json({
@@ -52,29 +61,29 @@ export const getUserById = async (req: AuthenticatedRequest, res: Response) => {
 };
 
 export const createUser = async (req: AuthenticatedRequest, res: Response) => {
-    try {
-        const { name, cuit, email, status, config } = req.body;
-        const user = new User({
-            name,
-            cuit,
-            email,
-            status,
-            config
-        });
+  try {
+    const { name, cuit, email, status, config } = req.body;
+    const user = new User({
+      name,
+      cuit,
+      email,
+      status,
+      config
+    });
 
-        await user.save();
+    await user.save();
 
-        res.status(201).json({data: user, token: jwt.sign({sub: user._id.toString()}, process.env.SECRET_API_KEY!)})
-    } catch (error) {
-        res.status(500).json({
-            message: "Error creating user",
-            error
-        })
-    }
+    res.status(201).json({ data: user, token: jwt.sign({ sub: user._id.toString() }, process.env.SECRET_API_KEY!) })
+  } catch (error) {
+    res.status(500).json({
+      message: "Error creating user",
+      error
+    })
+  }
 }
 
 export const updateUser = async (req: AuthenticatedRequest, res: Response) => {
-    try {
+  try {
     const { id } = req.params;
     const { name, cuit, email, status, config } = req.body;
     const updatedUser = await User.findByIdAndUpdate(
@@ -89,14 +98,14 @@ export const updateUser = async (req: AuthenticatedRequest, res: Response) => {
     res.status(200).json(updatedUser);
 
   } catch (error) {
-    res.status(500).json({ 
+    res.status(500).json({
       message: "Error updating user",
       error
     });
   }
 }
 
-export const deleteUser = async (req: AuthenticatedRequest, res: Response)  => {
+export const deleteUser = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { id } = req.params;
     const deletedUser = await User.findByIdAndDelete(id);
@@ -110,7 +119,7 @@ export const deleteUser = async (req: AuthenticatedRequest, res: Response)  => {
     });
 
   } catch (error) {
-    res.status(500).json({ 
+    res.status(500).json({
       message: "Error deleting user",
       error
     });

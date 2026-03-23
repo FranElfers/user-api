@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getUserById, getActualUser, createUser, updateUser, deleteUser } from "../queries/userQueries";
+import { getUserById, getActualUser, createUser, updateUser, deleteUser, getAllUsers } from "../queries/userQueries";
 import { authMiddleware, authorizeAdmin } from "../middleware/authMiddleware";
 
 
@@ -67,6 +67,27 @@ router.get("/sendgridtoken", authMiddleware, (req, res) => {
    *         description: Internal error
 */
 router.get("/admin/users/:userId", authMiddleware, authorizeAdmin, getUserById);
+
+/**
+ * @openapi
+ * /api/admin/users:
+ *   get:
+ *     summary: Get all users (admin only)
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of all users
+ *       401:
+ *         description: Unauthorized - missing or invalid token
+ *       403:
+ *         description: Forbidden - not an admin
+ *       500:
+ *         description: Internal error
+ */
+router.get("/admin/users", authMiddleware, authorizeAdmin, getAllUsers);
 
 /**
  * @openapi

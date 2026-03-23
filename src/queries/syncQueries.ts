@@ -34,7 +34,7 @@ export const pushRecords = async (req: AuthenticatedRequest, res: Response) => {
   const userId = req.actualUserId!;
 
   for (const record of records) {
-    const raw = record.data as { id?: number; updated_at?: number; [key: string]: unknown };
+    const raw = record.data as { id?: number; updated_at?: number;[key: string]: unknown };
 
     if (raw.id == null) {
       console.warn(`[sync/push] Missing "id" in record for table "${record.table}", skipping`);
