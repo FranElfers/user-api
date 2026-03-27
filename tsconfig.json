@@ -1,13 +1,20 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "CommonJS",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
     "rootDir": "./src",
     "outDir": "./dist",
     "strict": true,
-    "esModuleInterop": true,
-    "moduleResolution": "node",
     "skipLibCheck": true
   },
-  "include": ["src", "migrations"]
+  "include": [
+    "src",
+    "migrations"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/admin_panel_source"
+  ]
 }

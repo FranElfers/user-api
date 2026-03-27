@@ -1,5 +1,5 @@
 import mongoose, { SchemaType } from "mongoose";
-import { User } from "../src/models/user";
+import { User } from "../models/user";
 
 async function run() {
   await mongoose.connect(process.env.MONGO_URI!);

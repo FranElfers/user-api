@@ -1,10 +1,13 @@
 import express, { Request, Response, NextFunction } from "express";
 import path from "path";
+import { fileURLToPath } from "url";
 import userRoutes from "./routes/userRoutes";
 import configRoutes from "./routes/configRoutes";
 import indexRoutes from './routes/indexRoutes';
 import syncRoutes from './routes/syncRoutes';
 import { setupSwagger } from "./swagger";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 
