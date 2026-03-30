@@ -18,6 +18,7 @@
     "@leaderty/index-variations": "^1.0.2",
     "@types/jsonwebtoken": "^9.0.10",
     "cheerio": "^1.2.0",
+    "cors": "^2.8.6",
     "cron": "^4.4.0",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
@@ -30,6 +31,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/cron": "^2.4.3",
     "@types/express": "^5.0.6",
     "@types/node": "^25.5.0",

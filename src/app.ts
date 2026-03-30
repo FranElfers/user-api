@@ -6,11 +6,13 @@ import configRoutes from "./routes/configRoutes";
 import indexRoutes from './routes/indexRoutes';
 import syncRoutes from './routes/syncRoutes';
 import { setupSwagger } from "./swagger";
+import cors from "cors";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 
+app.use(cors({ origin: true }));
 app.use(express.json({ limit: "20mb" }));
 
 app.use((req: Request, res: Response, next: NextFunction) => {
