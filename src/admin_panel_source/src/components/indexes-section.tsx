@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { Spinner, ConfirmDialog, SortHeader, JsonViewerModal } from "./ui";
-import { UserFormModal } from "./user-form-modal";
+import { Spinner, ConfirmDialog, SortHeader } from "./ui";
+import { IndexFormModal } from "./index-form-modal";
 import { apiCall } from "../api";
 import type { Index, IndexRaw, SortDirection } from "../types";
 
@@ -11,13 +11,9 @@ export function IndexesSection({ onAuthError }: { onAuthError: () => void }) {
   const [sortField, setSortField] = useState<keyof Index | null>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
   const [showForm, setShowForm] = useState(false);
-  const [editingUser, setEditingUser] = useState<Index | null>(null);
-  const [deletingUser, setDeletingUser] = useState<Index | null>(null);
+  const [editingIndex, setEditingIndex] = useState<Index | null>(null);
+  const [deletingIndex, setDeletingIndex] = useState<Index | null>(null);
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const [viewingConfig, setViewingConfig] = useState<Record<
-    string,
-    unknown
-  > | null>(null);
 
   const fetchIndexes = useCallback(async () => {
     setLoading(true);
@@ -78,13 +74,39 @@ export function IndexesSection({ onAuthError }: { onAuthError: () => void }) {
     return sortDirection === "asc" ? comparison : -comparison;
   });
 
+  const handleDelete = async () => {
+    if (!deletingIndex) return;
+    setDeleteLoading(true);
+
+    const result = await apiCall(
+      `/api/admin/indexes/${deletingIndex.name}/${deletingIndex.date}`,
+      { method: "DELETE" },
+    );
+
+    setDeleteLoading(false);
+
+    if (result.status === 401 || result.status === 403) {
+      window.location.reload();
+      return;
+    }
+
+    if (result.error) {
+      setError(result.error);
+    } else {
+      setError("");
+      fetchIndexes();
+    }
+
+    setDeletingIndex(null);
+  };
+
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-900">Indexes</h2>
         <button
           onClick={() => {
-            setEditingUser(null);
+            setEditingIndex(null);
             setShowForm(true);
           }}
           className="rounded bg-gray-900 px-4 py-2 text-sm text-white hover:bg-gray-800"
@@ -134,10 +156,10 @@ export function IndexesSection({ onAuthError }: { onAuthError: () => void }) {
               {sortedIndexes.length === 0 ? (
                 <tr>
                   <td
-                    colSpan={8}
+                    colSpan={4}
                     className="border border-gray-200 px-4 py-8 text-center text-sm text-gray-500"
                   >
-                    No users found
+                    No indexes found
                   </td>
                 </tr>
               ) : (
@@ -159,7 +181,7 @@ export function IndexesSection({ onAuthError }: { onAuthError: () => void }) {
                       <div className="flex gap-2">
                         <button
                           onClick={() => {
-                            setEditingUser(index);
+                            setEditingIndex(index);
                             setShowForm(true);
                           }}
                           className="rounded border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-100"
@@ -167,7 +189,7 @@ export function IndexesSection({ onAuthError }: { onAuthError: () => void }) {
                           Edit
                         </button>
                         <button
-                          onClick={() => setDeletingUser(index)}
+                          onClick={() => setDeletingIndex(index)}
                           className="rounded border border-red-300 px-3 py-1 text-sm text-red-600 hover:bg-red-50"
                         >
                           Delete
@@ -182,26 +204,20 @@ export function IndexesSection({ onAuthError }: { onAuthError: () => void }) {
         </div>
       )}
 
-      {/* <UserFormModal
+      <IndexFormModal
         isOpen={showForm}
         onClose={() => setShowForm(false)}
-        user={editingUser}
+        index={editingIndex}
         onSuccess={fetchIndexes}
       />
 
-      <JsonViewerModal
-        isOpen={!!viewingConfig}
-        onClose={() => setViewingConfig(null)}
-        data={viewingConfig || {}}
-      />
-
       <ConfirmDialog
-        isOpen={!!deletingUser}
-        onClose={() => setDeletingUser(null)}
+        isOpen={!!deletingIndex}
+        onClose={() => setDeletingIndex(null)}
         onConfirm={handleDelete}
-        message={`Are you sure you want to delete user "${deletingUser?.name}"?`}
+        message={`Are you sure you want to delete index "${deletingIndex?.name}" for ${deletingIndex?.date}?`}
         loading={deleteLoading}
-      /> */}
+      />
     </div>
   );
 }

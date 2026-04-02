@@ -78,3 +78,17 @@ export async function getAllIndexes(): Promise<{ [key: string]: IIndex[] }> {
   }
   return grouped;
 }
+
+/**
+ * Deletes an index by name and month.
+ */
+export async function deleteIndexByMonth(
+  indexName: string,
+  date: Date
+): Promise<boolean> {
+  const result = await Index.deleteOne({
+    index: indexName,
+    date: toMonthStart(date)
+  });
+  return result.deletedCount > 0;
+}
