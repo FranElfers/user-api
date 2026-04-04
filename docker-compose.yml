@@ -7,9 +7,9 @@ services:
     image: franelfers/portfolio-api:latest
     container_name: portfolio
     ports:
-      - "3000:3000"
+      - "3001:3001"
     environment:
-      PORT: 3000
+      PORT: 3001
       API_KEY: ${API_KEY}
       AUTH_DOMAIN: ${AUTH_DOMAIN}
       PROJECT_ID: ${PROJECT_ID}
