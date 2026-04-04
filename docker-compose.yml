@@ -3,6 +3,28 @@ networks:
     driver: bridge
 
 services:
+  portfolio:
+    image: franelfers/portfolio-api:latest
+    container_name: portfolio
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      API_KEY: ${API_KEY}
+      AUTH_DOMAIN: ${AUTH_DOMAIN}
+      PROJECT_ID: ${PROJECT_ID}
+      STORAGE_BUCKET: ${STORAGE_BUCKET}
+      MESSAGING_SENDER_ID: ${MESSAGING_SENDER_ID}
+      APP_ID: ${APP_ID}
+    networks:
+      - app_network
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+
   api:
     image: franelfers/user-api:latest
     container_name: user-api
