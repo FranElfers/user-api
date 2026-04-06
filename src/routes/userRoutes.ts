@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { getUserById, getActualUser, createUser, updateUser, deleteUser, getAllUsers } from "../queries/userQueries";
 import { authMiddleware, authorizeAdmin } from "../middleware/authMiddleware";
+import { sendMail } from '../sendgrid';
 
 
 const router = Router();
@@ -30,6 +31,7 @@ const router = Router();
    *         description: Internal error
 */
 router.get("/users", authMiddleware, getActualUser);
+router.post("/sendmail", authMiddleware, sendMail)
 
 router.get("/sendgridtoken", authMiddleware, (req, res) => {
   res.json({ token: process.env.SENDGRID_API_KEY || null });

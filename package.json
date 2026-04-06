@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@leaderty/index-variations": "^1.0.2",
+    "@sendgrid/mail": "^8.1.6",
     "@types/jsonwebtoken": "^9.0.10",
     "cheerio": "^1.2.0",
     "cors": "^2.8.6",
